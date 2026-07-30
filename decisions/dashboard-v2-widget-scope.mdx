@@ -1,6 +1,6 @@
 ---
 title: Dashboard V2 Widget Scope
-description: Current module-widget access, location-scope, and retirement rules for Dashboard V2.
+description: Current module-widget access, location-scope, ranking-type, and retirement rules for Dashboard V2.
 ---
 
 # Dashboard V2 Widget Scope
@@ -34,6 +34,39 @@ Location groups and teams are not Review-widget filters. Module grants may conti
 
 Legacy stored `location_group_ids` and `team_ids` remain backend-compatible. The frontend does not delete or rewrite them merely because those selectors are no longer offered.
 
+## Review ranking widget types
+
+Each Review ranking answers a distinct user question and is therefore an independent catalog and registry type:
+
+- `reviews.best-rated`
+- `reviews.most-reviews`
+- `reviews.worst-rated`
+- `reviews.most-negative`
+- `reviews.negative-streaks`
+
+There is no configurable ranking umbrella in Dashboard V2. In particular:
+
+- `reviews.location-ranking` is not a registered or catalog-visible widget type,
+- ranking types are not represented as `variants` or catalog `presets`,
+- users cannot change one ranking widget into another through a `rank` setting,
+- each ranking widget exposes only settings that genuinely apply to that type, such as platform and allowed location selection.
+
+Shared rendering and data primitives may be reused internally, but every ranking remains an independently named manifest and runtime component.
+
+### Stored-layout compatibility
+
+The short-lived `reviews.location-ranking` type is accepted only as an input migration case. Its stored `settings.rank` value maps to the corresponding standalone type:
+
+| Stored rank | Standalone type |
+| --- | --- |
+| `quality` | `reviews.best-rated` |
+| `count` | `reviews.most-reviews` |
+| `worst` | `reviews.worst-rated` |
+| `negative` | `reviews.most-negative` |
+| `streak` | `reviews.negative-streaks` |
+
+A missing or invalid rank fails closed to `reviews.best-rated`. Migration preserves the instance ID, geometry, platform setting, location selection, and compatible legacy scope fields; it removes only the obsolete `rank` setting. Prototype-chain keys are not valid rank mappings.
+
 ## Required implementation state
 
 - Neither retired type is registered in the widget catalog or component map.
@@ -43,6 +76,8 @@ Legacy stored `location_group_ids` and `team_ids` remain backend-compatible. The
 - Saved instances whose type is currently unavailable remain persisted and are skipped during runtime resolution. No destructive layout migration removes them.
 - Review widgets share one access gate across catalog, saved-instance rendering, and the starter layout.
 - Review widget APIs independently enforce the required module right and resolve data only from the effective grant location set.
+- All five Review ranking types have independent manifests, component-map entries, catalog entries, titles, descriptions, and access/configuration contracts.
+- The legacy ranking umbrella exists only in the targeted compatibility migration and is never rendered or offered.
 
 ## Reintroduction gate
 
