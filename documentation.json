@@ -36,6 +36,17 @@
             ]
           },
           {
+            "group": "Engineering Decisions",
+            "icon": "git-branch",
+            "pages": [
+              {
+                "title": "Dashboard V2 Widget Scope",
+                "path": "decisions/dashboard-v2-widget-scope",
+                "icon": "layout-dashboard"
+              }
+            ]
+          },
+          {
             "group": "Components",
             "icon": "layers",
             "pages": [

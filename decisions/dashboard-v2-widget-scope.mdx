@@ -1,0 +1,35 @@
+---
+title: Dashboard V2 Widget Scope
+description: Current module-widget scope and retirement rules for Dashboard V2.
+---
+
+# Dashboard V2 Widget Scope
+
+## Decision
+
+As of 30 July 2026, Dashboard V2 does **not** offer these unfinished module widgets:
+
+- `module.cloud.my-files`
+- `module.postingStudio.upcoming`
+
+<Note>
+Company Cloud and Posting Studio remain available as standalone modules. This decision removes only their Dashboard V2 widgets and widget-specific data paths.
+</Note>
+
+## Required implementation state
+
+- Neither type is registered in the widget catalog or component map.
+- Widget-specific labels, previews, components, services, API routes, and tests are absent.
+- `GET /companies/{company}/campaigns/upcoming` is not part of the API.
+- Cloud Assets does not expose widget-only `space_type=all`, `uploaded_by`, or `updated_at` sorting/response extensions.
+- Previously saved instances of either type are treated as retired: they are removed while loading a layout and disappear permanently with the next save.
+
+## Reintroduction gate
+
+Either widget may return only after a separately reviewed product and data contract defines:
+
+1. the concrete user question the widget answers,
+2. useful content at every offered size,
+3. module-grant and location-scope behavior,
+4. loading, empty, error, and permission states,
+5. backend aggregation ownership and automated tests.
