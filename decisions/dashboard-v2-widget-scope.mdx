@@ -1,13 +1,13 @@
 ---
 title: Dashboard V2 Widget Scope
-description: Current module-widget scope and retirement rules for Dashboard V2.
+description: Current module-widget access, location-scope, and retirement rules for Dashboard V2.
 ---
 
 # Dashboard V2 Widget Scope
 
 ## Decision
 
-As of 30 July 2026, Dashboard V2 does **not** offer these unfinished module widgets:
+As of 31 July 2026, Dashboard V2 does **not** offer these unfinished module widgets:
 
 - `module.cloud.my-files`
 - `module.postingStudio.upcoming`
@@ -16,17 +16,37 @@ As of 30 July 2026, Dashboard V2 does **not** offer these unfinished module widg
 Company Cloud and Posting Studio remain available as standalone modules. This decision removes only their Dashboard V2 widgets and widget-specific data paths.
 </Note>
 
+## Review widget access and location scope
+
+Review widgets are benefits of the active Review Management module. Core access to review data at a location does not unlock a Review widget, add it to the catalog, expose its API, or expand its location scope.
+
+Each Review widget requires the matching effective module right:
+
+- statistical Review widgets require `view`,
+- the unanswered-review work queue requires `respond`.
+
+The maximum eligible location set is the location set produced by the existing effective Review Management grants for the required right. The widget configuration can only narrow that set:
+
+- **All granted locations** evaluates the complete effective grant scope.
+- **Selected locations** is a multiselect populated only from that effective grant scope.
+
+Location groups and teams are not Review-widget filters. Module grants may continue to use all existing scope types, including groups and teams; the widget consumes only their resulting location IDs. This decision does not change module-grant resolution.
+
+Legacy stored `location_group_ids` and `team_ids` remain backend-compatible. The frontend does not delete or rewrite them merely because those selectors are no longer offered.
+
 ## Required implementation state
 
-- Neither type is registered in the widget catalog or component map.
+- Neither retired type is registered in the widget catalog or component map.
 - Widget-specific labels, previews, components, services, API routes, and tests are absent.
 - `GET /companies/{company}/campaigns/upcoming` is not part of the API.
 - Cloud Assets does not expose widget-only `space_type=all`, `uploaded_by`, or `updated_at` sorting/response extensions.
-- Previously saved instances of either type are treated as retired: they are removed while loading a layout and disappear permanently with the next save.
+- Saved instances whose type is currently unavailable remain persisted and are skipped during runtime resolution. No destructive layout migration removes them.
+- Review widgets share one access gate across catalog, saved-instance rendering, and the starter layout.
+- Review widget APIs independently enforce the required module right and resolve data only from the effective grant location set.
 
 ## Reintroduction gate
 
-Either widget may return only after a separately reviewed product and data contract defines:
+Either retired widget may return only after a separately reviewed product and data contract defines:
 
 1. the concrete user question the widget answers,
 2. useful content at every offered size,
