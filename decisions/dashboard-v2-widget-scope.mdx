@@ -51,7 +51,7 @@ There is no configurable ranking umbrella in Dashboard V2. In particular:
 - users cannot change one ranking widget into another through a `rank` setting,
 - each ranking widget exposes only settings that genuinely apply to that type, such as platform and allowed location selection.
 
-Shared rendering and data primitives may be reused internally, but every ranking remains an independently named manifest and runtime component.
+The established renderers are reused internally: `TopLocationsWidget` renders the three fixed `manifest.rankMode` types, and `NegativeLocationsWidget` renders the two fixed `manifest.negativeMode` types. Every ranking retains its own manifest, catalog entry, title, description, and access/configuration contract; no additional wrapper component is introduced.
 
 ### Stored-layout compatibility
 
@@ -76,7 +76,7 @@ A missing or invalid rank fails closed to `reviews.best-rated`. Migration preser
 - Saved instances whose type is currently unavailable remain persisted and are skipped during runtime resolution. No destructive layout migration removes them.
 - Review widgets share one access gate across catalog, saved-instance rendering, and the starter layout.
 - Review widget APIs independently enforce the required module right and resolve data only from the effective grant location set.
-- All five Review ranking types have independent manifests, component-map entries, catalog entries, titles, descriptions, and access/configuration contracts.
+- All five Review ranking types have independent manifests, catalog entries, titles, descriptions, and access/configuration contracts while reusing the established `topLocations` and `negativeLocations` component-map entries.
 - The legacy ranking umbrella exists only in the targeted compatibility migration and is never rendered or offered.
 
 ## Reintroduction gate
